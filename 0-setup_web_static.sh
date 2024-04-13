@@ -1,22 +1,35 @@
 #!/usr/bin/env bash
-# Set up server file system for deployment
+# sets up your web servers for the deployment of web_static
 
-# Install nginx
-sudo apt-get -y update
-sudo apt-get -y install nginx
-sudo service nginx start
+# Install Nginx if it not already installed
+if ! command -v nginx;
+then
+    echo "Nginx is not installed. Installing..."
+    sudo apt-get update
+    sudo apt-get install nginx -y
+    sudo systemctl start nginx
 
-# Configure file system
+else
+    echo "Nginx is already installed. Skipping installation."
+fi
+
+# Create necessary parent directories
 sudo mkdir -p /data/web_static/shared/
 sudo mkdir -p /data/web_static/releases/test/
-echo "Holberton School" | sudo tee /data/web_static/releases/test/index.html > /dev/null
+
+# Creating symbolic links
 sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
-# set permissions
+# Adjust the permissions or ownership of the folders
 sudo chown -R ubuntu:ubuntu /data/
 
-# configure nginx
-sudo sed -i '44i \\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}' /etc/nginx/sites-available/default
+# create sample pages
+echo "Holberton School" > /data/web_static/releases/test/index.html
 
-# restart web server
-sudo service nginx restart
+# sudo ln -s "/etc/nginx/sites-available/default" "/etc/nginx/sites-enabled/"
+# Creating Server Block Files
+sudo sed -i '49i \\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}' /etc/nginx/sites-available/default
+
+# If no problems were found, restart Nginx to enable your changes
+sudo nginx -t
+sudo systemctl restart nginx
