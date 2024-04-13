@@ -22,6 +22,7 @@ sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 # Adjust the permissions or ownership of the folders
 sudo chown -R ubuntu:ubuntu /data/
+sudo chmod -R 755 /data/
 
 # create sample pages
 echo "Holberton School" > /data/web_static/releases/test/index.html
