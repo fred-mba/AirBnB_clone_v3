@@ -17,12 +17,12 @@ fi
 sudo mkdir -p /data/web_static/shared/
 sudo mkdir -p /data/web_static/releases/test/
 
-# Creating symbolic links
-sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
-
 # Adjust the permissions or ownership of the folders
 sudo chown -R ubuntu:ubuntu /data/
-#sudo chmod -R 755 /data/
+sudo chmod -R 755 /data/
+
+# Creating symbolic links
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 # create sample pages
 echo "Holberton School" > /data/web_static/releases/test/index.html
