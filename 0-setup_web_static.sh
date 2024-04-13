@@ -1,35 +1,71 @@
 #!/usr/bin/env bash
-# deployment of webserver
+# sets up your web servers for the deployment of web_static
 
-sudo apt-get update
-sudo apt-get install -y nginx
+# Step:1 => Install Nginx if it not already installed
+if ! command -v nginx &> /dev/null;
+then
+    echo "Nginx is not installed. Installing..."
+    apt-get update -y
+    apt-get install nginx -y
+    systemctl start nginx.service
 
-sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir -p /data/web_static/shared
-echo "fake html for testing" > /data/web_static/releases/test/index.html
-sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+    # Ensuring nginx can be managed via init
+    systemctl enable nginx
 
-sudo chown -R ubuntu /data
-sudo chgrp -R ubuntu /data
+else
+    echo "Nginx is already installed. Skipping installation."
+fi
 
-printf %s "server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    add_header X-Served-By \"$hostname\";
-    root   /var/www/html;
-    index  index.html index.htm;
-    location /hbnb_static {
-        alias /data/web_static/current;
-        index index.html index.htm;
-    }
-    location /redirect_me {
-        return 301 http://github.com/besthor;
-    }
-    error_page 404 /404.html;
-    location /404 {
-        root /var/www/html;
-        internal;
-    }
-}" > /etc/nginx/sites-available/default
+# Create necessary parent directories
+mkdir -p /data/web_static/shared/
+mkdir -p /data/web_static/releases/test/
 
-sudo service nginx restart
+# Adjust the permissions or ownership of the folders
+chown -R ubuntu:ubuntu /data
+chmod -R 755 /data
+
+# Step 2: => create sample pages
+tee /data/web_static/releases/test/index.html <<EOF
+<html>
+    <head>
+    </head>
+    <body>
+      Holberton School
+    </body>
+</html>
+EOF
+
+# Step 3: => Creating Server Block Files
+tee /etc/nginx/sites-available/myconfig.config <<EOF
+server {
+        listen 80;
+
+        server_name _;
+
+        location /hbnb_static/ {
+                alias /data/web_static/current/;
+        }
+}
+EOF
+
+# Step 4: => Creating symbolic links
+original_path="/data/web_static/releases/test/"
+link_path="/data/web_static/current"
+
+if [ -L "$link_path" ]; then
+    echo "Symbolic link already exist. Deleting..."
+    rm "$link_path"
+else
+    ln -s "$original_path" "$link_path"
+    echo "Symbolic link created successfully."
+fi
+
+# Test the configuration files
+# If no problems were found, restart Nginx to enable your changes
+test_nginx="nginx -t"
+if [ "$test_nginx" ]; then
+    echo "Nginx configuration test successfull. Restarting now..."
+    systemctl restart nginx
+else
+    echo "Nginx configuration failed. Skipping restart!"
+fi
