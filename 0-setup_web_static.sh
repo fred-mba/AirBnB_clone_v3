@@ -2,30 +2,30 @@
 # sets up your web servers for the deployment of web_static
 
 # Step:1 => Install Nginx if it not already installed
-if ! command -v nginx &> /dev/null;
+if ! command -v nginx;
 then
     echo "Nginx is not installed. Installing..."
-    apt-get update -y
-    apt-get install nginx -y
-    systemctl start nginx.service
+    sudo apt-get update
+    sudo apt-get install nginx -y
+    sudo systemctl start nginx.service
 
     # Ensuring nginx can be managed via init
-    systemctl enable nginx
+    sudo systemctl enable nginx
 
 else
     echo "Nginx is already installed. Skipping installation."
 fi
 
 # Create necessary parent directories
-mkdir -p /data/web_static/shared/
-mkdir -p /data/web_static/releases/test/
+sudo mkdir -p /data/web_static/shared/
+sudo mkdir -p /data/web_static/releases/test/
 
 # Adjust the permissions or ownership of the folders
-chown -R ubuntu:ubuntu /data
-chmod -R 755 /data
+sudo chown -R ubuntu:ubuntu /data
+sudo chmod -R 755 /data
 
 # Step 2: => create sample pages
-tee /data/web_static/releases/test/index.html <<EOF
+sudo tee /data/web_static/releases/test/index.html <<EOF
 <html>
     <head>
     </head>
@@ -36,7 +36,7 @@ tee /data/web_static/releases/test/index.html <<EOF
 EOF
 
 # Step 3: => Creating Server Block Files
-tee /etc/nginx/sites-available/myconfig.config <<EOF
+sudo tee /etc/nginx/sites-available/myconfig.config <<EOF
 server {
         listen 80;
 
@@ -54,9 +54,9 @@ link_path="/data/web_static/current"
 
 if [ -L "$link_path" ]; then
     echo "Symbolic link already exist. Deleting..."
-    rm "$link_path"
+    sudo rm "$link_path"
 else
-    ln -s "$original_path" "$link_path"
+    sudo ln -s "$original_path" "$link_path"
     echo "Symbolic link created successfully."
 fi
 
@@ -65,7 +65,7 @@ fi
 test_nginx="nginx -t"
 if [ "$test_nginx" ]; then
     echo "Nginx configuration test successfull. Restarting now..."
-    systemctl restart nginx
+    sudo systemctl restart nginx
 else
     echo "Nginx configuration failed. Skipping restart!"
 fi
