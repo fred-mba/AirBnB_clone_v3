@@ -7,7 +7,7 @@ then
     echo "Nginx is not installed. Installing..."
     sudo apt-get update
     sudo apt-get install nginx -y
-    sudo systemctl start nginx
+    sudo service nginx start
 
 else
     echo "Nginx is already installed. Skipping installation."
@@ -32,4 +32,4 @@ sudo sed -i '49i \\n\tlocation /hbnb_static {\n\t\talias /data/web_static/curren
 
 # If no problems were found, restart Nginx to enable your changes
 sudo nginx -t
-sudo systemctl restart nginx
+sudo service nginx restart
