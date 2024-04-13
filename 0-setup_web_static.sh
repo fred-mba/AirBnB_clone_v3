@@ -21,51 +21,22 @@ sudo mkdir -p /data/web_static/shared/
 sudo mkdir -p /data/web_static/releases/test/
 
 # Adjust the permissions or ownership of the folders
-sudo chown -R ubuntu:ubuntu /data
-sudo chmod -R 755 /data
+sudo chown -R ubuntu:ubuntu /data/
+sudo chmod -R 755 /data/
 
 # Step 2: => create sample pages
-sudo tee /data/web_static/releases/test/index.html <<EOF
-<html>
-    <head>
-    </head>
-    <body>
-      Holberton School
-    </body>
-</html>
-EOF
+echo "Holberton School" > /data/web_static/releases/test/index.html
 
 # Step 3: => Creating Server Block Files
-sudo tee /etc/nginx/sites-available/myconfig.config <<EOF
-server {
-        listen 80;
-
-        server_name _;
-
-        location /hbnb_static/ {
-                alias /data/web_static/current/;
-        }
-}
-EOF
+sudo sed -i '49i \\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}' /etc/nginx/sites-available/default
 
 # Step 4: => Creating symbolic links
-original_path="/data/web_static/releases/test/"
-link_path="/data/web_static/current"
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+sudo chown -R ubuntu:ubuntu /data/web_static/current
 
-if [ -L "$link_path" ]; then
-    echo "Symbolic link already exist. Deleting..."
-    sudo rm "$link_path"
-else
-    sudo ln -s "$original_path" "$link_path"
-    echo "Symbolic link created successfully."
-fi
+# sudo ln -s "/etc/nginx/sites-available/default" "/etc/nginx/sites-enabled/"
+echo "Symbolic link created successfully."
 
-# Test the configuration files
 # If no problems were found, restart Nginx to enable your changes
-test_nginx="nginx -t"
-if [ "$test_nginx" ]; then
-    echo "Nginx configuration test successfull. Restarting now..."
-    sudo systemctl restart nginx
-else
-    echo "Nginx configuration failed. Skipping restart!"
-fi
+sudo nginx -t
+sudo systemctl restart nginx
