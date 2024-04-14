@@ -14,7 +14,7 @@ from fabric.api import local
 
 def do_pack():
     """Compress the web_static files to
-    web_static_<year><month><day><hour><minute><second>.tgz archive
+       web_static_<year><month><day><hour><minute><second>.tgz archive
     """
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 
