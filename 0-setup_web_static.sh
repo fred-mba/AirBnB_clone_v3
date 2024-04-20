@@ -1,35 +1,36 @@
 #!/usr/bin/env bash
-# deployment of webserver
+# sets up your web servers for the deployment of web_static
 
-sudo apt-get update
-sudo apt-get install -y nginx
+# Install Nginx if it not already installed
+if ! command -v nginx;
+then
+    echo "Nginx is not installed. Installing..."
+    apt-get update
+    apt-get install nginx -y
+    service nginx start
 
-sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir -p /data/web_static/shared
-echo "fake html for testing" > /data/web_static/releases/test/index.html
-sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+else
+    echo "Nginx is already installed. Skipping installation."
+fi
 
-sudo chown -R ubuntu /data
-sudo chgrp -R ubuntu /data
+# Create necessary parent directories
+mkdir -p /data/web_static/shared/
+mkdir -p /data/web_static/releases/test/
 
-printf %s "server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    add_header X-Served-By \"$hostname\";
-    root   /var/www/html;
-    index  index.html index.htm;
-    location /hbnb_static {
-        alias /data/web_static/current;
-        index index.html index.htm;
-    }
-    location /redirect_me {
-        return 301 http://github.com/besthor;
-    }
-    error_page 404 /404.html;
-    location /404 {
-        root /var/www/html;
-        internal;
-    }
-}" > /etc/nginx/sites-available/default
+# Creating symbolic links
+ln -sf /data/web_static/releases/test/ /data/web_static/current
 
-sudo service nginx restart
+# create sample pages
+echo "Holberton School" > /data/web_static/releases/test/index.html
+
+# Adjust the permissions or ownership of the folders
+chown -R ubuntu:ubuntu /data/
+chmod -R 755 /data/
+
+# sudo ln -s "/etc/nginx/sites-available/default" "/etc/nginx/sites-enabled/"
+# Creating Server Block Files
+sed -i '49i \\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}' /etc/nginx/sites-available/default
+
+# If no problems were found, restart Nginx to enable your changes
+nginx -t
+service nginx restart
