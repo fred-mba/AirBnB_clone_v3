@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## AirBnB clone - Web framework
 
 ### Learning Objectives
@@ -49,3 +50,6 @@ Follow this steps:
 	1. Set up a connection to your MySQL database.
 	2. Write a Flask route to fetch data from the database.
 	3. Pass the fetched data to an HTML template for rendering.
+=======
+web_flask
+>>>>>>> 13bd557badf43ae4a715ced2f930b9825a0454b5

@@ -9,7 +9,7 @@ correctly generated. Otherwise, it should return `None`
 """
 from os.path import isdir
 from datetime import datetime
-from fabric.api import local
+from fabric import task
 
 
 def do_pack():
