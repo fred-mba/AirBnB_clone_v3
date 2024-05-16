@@ -1,10 +1,15 @@
-from flask import flask
-""" start flask application
+#!/usr/bin/python3
+""" Start flask application
+    Must be listening on 0.0.0.0, port 5000
 routes:
  /: Displays 'Hello HBNB!'.
     /hbnb: Displays 'HBNB'.
-    /c/<text>: Displays 'C' followed by the value of <text>.
+    /c/<text>: Displays 'C' followed by the value of <text>
+              Replace underscore _ symbols with a space
 """
+from flask import Flask
+
+
 app = Flask(__name__)
 
 
@@ -19,9 +24,10 @@ def hbnb():
 
 
 @app.route('/c/<text>', strict_slashes=False)
-def c_text(text):
-    formatted_text = text.replace('_', '')
-    return "C {}".format(formatted_text)
+def text_function(text):
+    converter = text.replace('_', ' ')
+    return f'C {converter}'
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=5000)
