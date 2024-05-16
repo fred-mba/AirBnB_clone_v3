@@ -8,8 +8,7 @@ routes:
               Replace underscore _ symbols with a space
     /python/<text>: display “Python ”, followed by the value of <text>
               Replace underscore _ symbols with a space
-
-The default value of text is “is cool”
+              The default value of text is “is cool”
 """
 from flask import Flask
 
