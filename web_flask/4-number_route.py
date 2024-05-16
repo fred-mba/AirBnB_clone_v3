@@ -8,9 +8,9 @@ routes:
               Replace underscore _ symbols with a space
     /python/<text>: display “Python ”, followed by the value of <text>
               Replace underscore _ symbols with a space
+              The default value of text is “is cool”
     /number/<n>: display “n is a number” only if n is an integer
 
-The default value of text is “is cool”
 """
 from flask import Flask
 
