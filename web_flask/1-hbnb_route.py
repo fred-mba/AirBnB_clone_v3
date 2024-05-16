@@ -1,9 +1,12 @@
-from flask import flask
-""" start flask application
+#!/usr/bin/python3
+""" Start flask application
+     Must be listening on 0.0.0.0, port 5000
 routes:
- /: Displays 'Hello HBNB!'.
+    /: Displays 'Hello HBNB!'.
     /hbnb: Displays 'HBNB'.
 """
+from flask import Flask
+
 app = Flask(__name__)
 
 
@@ -16,5 +19,6 @@ def hello_hbnb():
 def hbnb():
     return "HBNB"
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0", port=5000)
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
