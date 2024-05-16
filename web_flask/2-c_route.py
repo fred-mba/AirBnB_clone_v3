@@ -2,7 +2,7 @@
 """ Start flask application
     Must be listening on 0.0.0.0, port 5000
 routes:
- /: Displays 'Hello HBNB!'.
+     /: Displays 'Hello HBNB!'.
     /hbnb: Displays 'HBNB'.
     /c/<text>: Displays 'C' followed by the value of <text>
               Replace underscore _ symbols with a space
