@@ -4,12 +4,14 @@ from sqlalchemy import create_engine, Column, String, DateTime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+import uuid
+import models
 
 Base = declarative_base()
 
 class BaseModel(Base):
     """It defines the base model class"""
-    __tablename__ = "base_model"
+    __abstract__ = True
 
     id = Column(String(68), primary_key=True)
     updated_at = Column(DateTime, nullable=False, default=datetime.now)
@@ -34,6 +36,7 @@ class BaseModel(Base):
                 self.updated_at = datetime.now()
             if 'created_at' not in kwargs:
                  self.created_at = datetime.now()
+            storage.new(self)
 
     def __str__(self):
         """returns a string representation"""
@@ -58,4 +61,4 @@ class BaseModel(Base):
 
     def delete(self):
         """ delete the  object"""
-        models.storage.delete(self)
+        storage.delete(self)
