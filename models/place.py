@@ -2,21 +2,20 @@
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
-import models
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from os import environ
 
 storage_engine = environ.get("HBNB_TYPE_STORAGE")
 
-if storage_engine == "db":
-    place_amenity = Table('place_amenity', Base.metadata,
-                          Column('place_id', String(60),
-                                 ForeignKey('places.id'),
-                                 primary_key=True, nullable=False),
-                          Column('amenity_id', String(60),
-                                 ForeignKey('amenities.id'),
-                                 primary_key=True, nullable=False))
-
+place_amenity = Table(
+    'place_amenity', Base.metadata,
+    Column('place_id', String(60),
+        ForeignKey('places.id'),
+        primary_key=True, nullable=False),
+    Column('amenity_id', String(60),
+        ForeignKey('amenities.id'),
+        primary_key=True, nullable=False)
+)
 
 class Place(BaseModel, Base):
     """A place to stay
@@ -37,7 +36,7 @@ class Place(BaseModel, Base):
         reviews = relationship("Review", back_populates="place")
         amenities = relationship("Amenity",
                                  secondary=place_amenity,
-                                 back_populates="place_amenities",
+                                 back_populates="place_amenity",
                                  viewonly=False)
     else:
         city_id = ""

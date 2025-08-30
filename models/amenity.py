@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+""" Amenity Module for HBNB project """
 from models.base_model import BaseModel, Base
 from models.place import place_amenity
 from sqlalchemy import Column, String
@@ -15,7 +15,8 @@ class Amenity(BaseModel, Base):
         place_amenities = relationship(
             "Place",
             secondary=place_amenity,
-            back_populates="amenities"
+            #back_populates="amenities"
+            viewonly=False
         )
 
     else:
