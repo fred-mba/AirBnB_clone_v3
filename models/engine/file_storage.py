@@ -1,64 +1,70 @@
 #!/usr/bin/python3
-"""Serialization and deserialization of python objects"""
+"""This module defines a class to manage file storage"""
 import json
-from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
-from models.user import User
-
+import models
 
 class FileStorage:
-    """Storage class"""
-    __file_path = "file.json"
-    __objects = {}  # will store all objects by <class name>.id
+    """Serialize and deserialize"""
+    __file_path = 'file.json'
+    __objects = {}
 
-    def all(self):
-        """Returns the dictionary __objects"""
-        return self.__objects
+    def all(self, cls=None):
+        """It return all objects or objects of a specific class"""
+        if cls:
+            return {
+                key: obj for key, obj in self.__objects.items()
+                if isinstance(obj, cls)
+            }
+        else:
+            return self.__objects
+
+    
+    def delete(self, obj=None):
+        """Delete the instance of a class"""
+        if obj is None:
+            return
+
+        for key, val in list(self.__objects.items()):
+            if val == obj:
+                del self.__objects[key]
+                break
 
     def new(self, obj):
-        """sets in __objects the obj with key <obj class name>.id"""
-        key = f"{obj.__class__.__name__}.{obj.id}"
-        self.__objects[key] = obj
+        """Adds new object to storage dictionary"""
+        self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
 
     def save(self):
-        """Serializes __objects to JSON file, that is,
-        covert objects into a format that can easily be stored"""
-        serialized_obj = {}
-        for key, obj in self.all().items():
-            serialized_obj[key] = obj.to_dict()
-
-        with open(self.__file_path, 'w') as file:
-            json.dump(serialized_obj, file)
+        """Saves storage dictionary to file"""
+        with open(FileStorage.__file_path, 'w') as f:
+            temp = {}
+            temp.update(FileStorage.__objects)
+            for key, val in temp.items():
+                temp[key] = val.to_dict()
+            json.dump(temp, f)
 
     def reload(self):
-        """Deserializes JSON file to __objects, that is,
-        converting data back into its origial data structure or object
-        allowing it to be used in the program as it was before."""
-        class_list = {
-            'Amenity': Amenity,
-            'BaseModel': BaseModel,
-            'City': City,
-            'Place': Place,
-            'Review': Review,
-            'State': State,
-            'User': User,
-        }
+        """Loads storage dictionary from file by creating an instance of
+           that class passing in the attributes and storing it in __objects
+           under dictionary key.
+        """
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.review import Review
 
+        classes = {
+                    'BaseModel': BaseModel, 'User': User, 'Place': Place,
+                    'State': State, 'City': City, 'Amenity': Amenity,
+                    'Review': Review
+                  }
         try:
-            with open(self.__file_path, 'r',) as file:
-                data = json.load(file)
-
-            for key, obj_dict in data.items():
-                """Tuple unpacking"""
-                class_name = obj_dict["__class__"]
-                class_obj = class_list[class_name]
-                obj = class_obj(**obj_dict)
-                all_objects = self.all()
-                all_objects[key] = obj
-
+            temp = {}
+            with open(FileStorage.__file_path, 'r') as f:
+                temp = json.load(f)
+                for key, val in temp.items():
+                    self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
-            return
+            pass
