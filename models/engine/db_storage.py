@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-'''database storage engine'''
+'''Database storage engine'''
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
@@ -38,7 +38,7 @@ class DBStorage:
             print("❌ Connection failed:", e)
 
     def all(self, cls=None):
-        """it queries the current session and list all instances of cls"""
+        """Queries the current session and list all instances of cls"""
         output = {}
         if cls:
             for instance in self.__session.query(cls).all():
@@ -54,20 +54,28 @@ class DBStorage:
 
 
     def new(self, obj):
-        """add object to current session"""
+        """Adds object to current session"""
         self.__session.add(obj)
 
     def save(self):
-        """save current work done"""
+        """Saves current work done"""
         self.__session.commit()
 
 
     def delete(self, obj=None):
-        """delete the current obj in the database"""
-        if (obj is None):
+        """Deletes the current obj in the database session if not None"""
+        if obj is not None:
             self.__session.delete(obj)
 
     def reload(self):
+        """
+           - Makes sure all table existin the db.
+           - Sets up factory for creating sessions, with objects not expring
+             after commit
+           - Wraps session_factory in a thread-safe helper
+           - Creates a new session and stores it in self.__session for later
+             use
+        """
         Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(bind=self.__engine,
                                         expire_on_commit=False)
