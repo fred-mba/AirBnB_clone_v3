@@ -11,6 +11,7 @@ class City(BaseModel, Base):
     """ The city class, contains state ID and name """
     __tablename__ = 'cities'
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+        id = Column(String(60), primary_key=True, nullable=False)
         name = Column(String(128), nullable=False)
         state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
         place = relationship("Place", cascade='all, delete', backref="cities")

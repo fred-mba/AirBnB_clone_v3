@@ -6,26 +6,23 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import uuid
 import models
-#from models import storage
 
 Base = declarative_base()
 
-class BaseModel(Base):
+class BaseModel:
     """It defines the base model class"""
-    __abstract__ = True
 
-    id = Column(String(68), primary_key=True)
+    id = Column(String(60), primary_key=True)
     updated_at = Column(DateTime, nullable=False, default=datetime.now)
     created_at = Column(DateTime, nullable=False, default=datetime.now)
 
     def __init__(self, *args, **kwargs):
-        """Instatntiates a new model"""
+        """Instantiates a new model"""
         if not kwargs:
-            #from models import storage
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            models.storage.new(self)
+           # models.storage.new(self) Moved to def save(self)
         else:
             for key, value in kwargs.items():
                 if key == 'updated_at' or key == 'created_at':
@@ -47,7 +44,7 @@ class BaseModel(Base):
     def save(self):
         """update instance attribute updated_at to current time"""
         self.updated_at = datetime.now()
-        models.storage.new(self)
+        models.storage.new(self) # Moved here
         models.storage.save()
 
     def to_dict(self):

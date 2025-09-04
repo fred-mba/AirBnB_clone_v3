@@ -10,6 +10,7 @@ class State(BaseModel, Base):
     """Representing the state class"""
     __tablename__ = 'states'
     if getenv('HBNB_TYPE_STORAGE') == 'db':
+        id = Column(String(60), primary_key=True, nullable=False)
         name = Column(String(128), nullable=False)
         cities = relationship('City', backref='state',
                               cascade='all, delete, delete-orphan')
@@ -17,7 +18,7 @@ class State(BaseModel, Base):
 
         @property
         def cities(self):
-            """returns the list of City instances linked with this State
+            """Returns the list of City instances linked with this State
             """
             from models import storage
             city_list = []
