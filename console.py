@@ -82,7 +82,7 @@ class HBNBCommand(cmd.Cmd):
             obj_id = args_input[1]
             key = f"{class_name}.{obj_id}"
 
-            if key in self.objects:
+            if key in self.objects.keys():
                 print(self.objects[key])
             else:
                 print("** no instance found **")

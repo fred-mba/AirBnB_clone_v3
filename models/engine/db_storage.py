@@ -39,18 +39,18 @@ class DBStorage:
 
     def all(self, cls=None):
         """Queries the current session and list all instances of cls"""
-        output = {}
+        instances = {}
         if cls:
-            for instance in self.__session.query(cls).all():
-                key = "{}.{}".format(cls.__name__, instance.id)
-                output[key] = instance.to_dict()
+            for obj in self.__session.query(cls).all():
+                key = f"{obj.__class__.__name__}.{obj.id}"
+                instances[key] = obj
         else:
-            for table in models.dummy_tables:
-                cls = models.dummy_tables[table]
-                for instance in self.__session.query(cls).all():
-                    key = "{}.{}".format(cls.__name__, instance.id)
-                    output[key] = instance.to_dict()
-        return output
+            for obj_cls in classes.values():
+                objs = self.__session.query(obj_cls).all()
+                for obj in objs:
+                    key = f"{obj.__class__.__name__}.{obj.id}"
+                    instances[key] = obj
+        return instances
 
 
     def new(self, obj):
@@ -69,7 +69,7 @@ class DBStorage:
 
     def reload(self):
         """
-           - Makes sure all table existin the db.
+           - Makes sure all tables exist in the db.
            - Sets up factory for creating sessions, with objects not expring
              after commit
            - Wraps session_factory in a thread-safe helper

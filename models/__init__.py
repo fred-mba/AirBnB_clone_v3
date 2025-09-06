@@ -12,15 +12,6 @@ from models.engine.file_storage import FileStorage
 from models.engine.db_storage import DBStorage
 import os
 
-dummy_tables = {
-   "users": User,
-   "states": State,
-   "cities": City,
-   "amenities": Amenity,
-   "places": Place,
-   "reviews": Review
-}
-
 if os.getenv('HBNB_TYPE_STORAGE') == 'db':
     storage = DBStorage()
 else:
