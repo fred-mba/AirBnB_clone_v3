@@ -16,10 +16,10 @@ from models import storage
 class HBNBCommand(cmd.Cmd):
     """
     The command class defines the commands to
-    be used in the user interactive mode
+    be used in the user interactive mode.
+    Its the Frontend interface where the input commands are interpreted and sent to storage methods(backend logic)
     """
     prompt = "(hbnb) "
-    objects = storage.all()
 
     class_list = {
         "Amenity": Amenity,
@@ -81,9 +81,10 @@ class HBNBCommand(cmd.Cmd):
         else:
             obj_id = args_input[1]
             key = f"{class_name}.{obj_id}"
+            all_objs = storage.all()
 
-            if key in self.objects.keys():
-                print(self.objects[key])
+            if key in all_objs.keys():
+                print(all_objs[key])
             else:
                 print("** no instance found **")
                 return
@@ -93,10 +94,11 @@ class HBNBCommand(cmd.Cmd):
         Prints all string representation of all instances based or not
         on the class name. Ex: $ all BaseModel or $ all
         """
+        all_objs = storage.all()
         args_input = args.strip().split()
 
         if not args_input:
-            print([str(obj) for obj in self.objects.values()])
+            print([str(obj) for obj in all_objs.values()])
             return
 
         else:
@@ -108,7 +110,7 @@ class HBNBCommand(cmd.Cmd):
 
             else:
                 result = []
-                for key, val in self.objects.items():
+                for key, val in all_objs.items():
                     if key.startswith(class_name):
                         result.append(str(val))
 
@@ -135,8 +137,9 @@ class HBNBCommand(cmd.Cmd):
 
         obj_id = args_input[1]
         key = f"{class_name}.{obj_id}"
+        all_objs = storage.all()
 
-        if key not in self.objects:
+        if key not in all_objs:
             print("** no instance found **")
             return
 
@@ -161,7 +164,7 @@ class HBNBCommand(cmd.Cmd):
             except ValueError:
                 attr_val = attr_val.strip('"').strip("'")
 
-        obj = self.objects.get(key)
+        obj = all_objs.get(key)
         setattr(obj, attr_name, attr_val)
         obj.save()
 
@@ -184,12 +187,13 @@ class HBNBCommand(cmd.Cmd):
         else:
             obj_id = line_args[1].strip('"')
             key = f"{class_name}.{obj_id}"
+            all_objs = storage.all()
 
-            if key not in self.objects:
+            if key not in all_objs:
                 print("** no instance found **")
                 return
             else:
-                del self.objects[key]
+                storage.delete(all_objs[key])
                 storage.save()
 
     def do_count(self, args):
@@ -203,10 +207,10 @@ class HBNBCommand(cmd.Cmd):
             class_name = line_args[0]
 
             if class_name in self.class_list:
-                all_objects = storage.all()
-
                 count = 0
-                for key in all_objects.keys():
+                all_objs = storage.all()
+
+                for key in all_objs.keys():
                     if key.startswith(class_name):
                         count += 1
                 print(count)
