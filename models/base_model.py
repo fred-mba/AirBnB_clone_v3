@@ -34,7 +34,7 @@ class BaseModel:
 
     def __str__(self):
         """returns a string representation"""
-        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+        return f"[{self.__class__.__name__}] ({self.id}) {self.to_dict()}"
 
     def save(self):
         """update instance attribute updated_at to current time"""
@@ -43,11 +43,15 @@ class BaseModel:
         models.storage.save()
 
     def to_dict(self):
-        """creates instance of a dict and  return all the key values in __dict__"""
+        """Copies everything python stores inside __objects including SQLAlchemy's objects.
+        - The _sa_instance_state is filtered out since json library can't serialize it
+        """
         my_dict = dict(self.__dict__)
         my_dict["__class__"] = self.__class__.__name__
         my_dict["created_at"] = self.created_at.isoformat()
         my_dict["updated_at"] = self.updated_at.isoformat()
+         # Remove SQLAlchemy internal attribute if present
+        my_dict.pop("_sa_instance_state", None)
         return my_dict
 
     def delete(self):
