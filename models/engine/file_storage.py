@@ -24,23 +24,26 @@ class FileStorage:
         if obj is None:
             return
 
-        for key, val in list(self.__objects.items()):
-            if val == obj:
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        if key in self.__objects:
                 del self.__objects[key]
-                break
 
     def new(self, obj):
-        """Adds new object to storage dictionary"""
-        self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
-
+        """Adds new object to storage dictionary
+           Added the condition check to avoid situation when obj is missing or
+           incorrectly implemented, returning `DeclarativeMeta` as a class.
+        """
+        if obj is not None and hasattr(obj, "to_dict"):
+            key = f"{obj.to_dict()['__class__']}.{obj.id}"
+            self.__objects[key] = obj
     def save(self):
         """Saves storage dictionary to file"""
         with open(FileStorage.__file_path, 'w') as f:
-            temp = {}
-            temp.update(FileStorage.__objects)
-            for key, val in temp.items():
-                temp[key] = val.to_dict()
-            json.dump(temp, f)
+            serialized_objs = {}
+
+            for key, obj in self.all().items():
+                serialized_objs[key] = obj.to_dict()
+            json.dump(serialized_objs, f)
 
     def reload(self):
         """Loads storage dictionary from file by creating an instance of
