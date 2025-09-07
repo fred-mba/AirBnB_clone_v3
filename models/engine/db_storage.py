@@ -21,7 +21,7 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        self.__engine = create_engine('mysql+MySQLdb)://{}:{}@{}/{}'.
+        self.__engine = create_engine('mysql+MySQLdb://{}:{}@{}/{}'.
                                       format(os.getenv('HBNB_MYSQL_USER'),
                                              os.getenv('HBNB_MYSQL_PWD'),
                                              os.getenv('HBNB_MYSQL_HOST'),
