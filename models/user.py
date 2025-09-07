@@ -8,6 +8,7 @@ import os
 from os import getenv
 import sqlalchemy
 
+
 class User(BaseModel, Base):
     """This class defines a user by various attributes"""
     __tablename__ = "users"
