@@ -21,7 +21,7 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        self.__engine = create_engine('mysql+MySQLdb://{}:{}@{}/{}'.
+        self.__engine = create_engine('mysql+pymysql://{}:{}@{}/{}'.
                                       format(os.getenv('HBNB_MYSQL_USER'),
                                              os.getenv('HBNB_MYSQL_PWD'),
                                              os.getenv('HBNB_MYSQL_HOST'),
@@ -52,7 +52,6 @@ class DBStorage:
                     instances[key] = obj
         return instances
 
-
     def new(self, obj):
         """Adds object to current session"""
         self.__session.add(obj)
@@ -60,7 +59,6 @@ class DBStorage:
     def save(self):
         """Saves current work done"""
         self.__session.commit()
-
 
     def delete(self, obj=None):
         """Deletes the current obj in the database session if not None"""
@@ -77,8 +75,10 @@ class DBStorage:
              use
         """
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine,
-                                        expire_on_commit=False)
+        session_factory = sessionmaker(
+            bind=self.__engine,
+            expire_on_commit=False
+        )
         Session = scoped_session(session_factory)
         self.__session = Session()
 

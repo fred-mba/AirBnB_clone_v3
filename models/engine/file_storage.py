@@ -3,6 +3,7 @@
 import json
 import models
 
+
 class FileStorage:
     """Serialize and deserialize"""
     __file_path = 'file.json'
@@ -18,7 +19,6 @@ class FileStorage:
         else:
             return self.__objects
 
-    
     def delete(self, obj=None):
         """Delete the instance of a class"""
         if obj is None:
@@ -26,7 +26,7 @@ class FileStorage:
 
         key = f"{obj.__class__.__name__}.{obj.id}"
         if key in self.__objects:
-                del self.__objects[key]
+            del self.__objects[key]
 
     def new(self, obj):
         """Adds new object to storage dictionary
@@ -36,6 +36,7 @@ class FileStorage:
         if obj is not None and hasattr(obj, "to_dict"):
             key = f"{obj.to_dict()['__class__']}.{obj.id}"
             self.__objects[key] = obj
+
     def save(self):
         """Saves storage dictionary to file"""
         with open(FileStorage.__file_path, 'w') as f:
@@ -67,7 +68,7 @@ class FileStorage:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
-                for key, obj_dict in temp.items():
-                    self.all()[key] = classes[obj_dict['__class__']](**obj_dict)
+                for key, obj in temp.items():
+                    self.all()[key] = classes[obj['__class__']](**obj_dict)
         except FileNotFoundError:
             pass
