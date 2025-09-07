@@ -15,9 +15,10 @@ from models import storage
 
 class HBNBCommand(cmd.Cmd):
     """
-    The command class defines the commands to
+    - The command class defines the commands to
     be used in the user interactive mode.
-    Its the Frontend interface where the input commands are interpreted and sent to storage methods(backend logic)
+    - Its the Frontend interface where the input commands are interpreted and
+    sent to storage methods(backend logic)
     """
     prompt = "(hbnb) "
 
