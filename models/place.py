@@ -42,20 +42,35 @@ class Place(BaseModel, Base):
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
         amenity_ids = []
-        reviews = relationship("Review", back_populates="place")
+        reviews = relationship("Review", cascade='all, delete', backref="place")
         amenities = relationship("Amenity",
                                  secondary=place_amenity,
                                  back_populates="place_amenity",
                                  viewonly=False)
     else:
-        city_id = ""
-        user_id = ""
-        name = ""
-        description = ""
-        number_rooms = 0
+        @property
+        def reviews(self):
+            """
+             - It is the FileStorage relationship between Place and Review.
+             - Returns the list of Review instances with place_id equals to
+             the current Place.id
+            """
+            from models import storage
+
+            review_list = []
+            for review in self.storage.all(Review).values():
+                if place_id == self.id
+                    review_list.append(review)
+             return review_list
+
+        #city_id = ""
+        #user_id = ""
+        #name = ""
+        #description = ""
+        """number_rooms = 0
         number_bathrooms = 0
         max_guest = 0
         price_by_night = 0
         latitude = 0.0
         longitude = 0.0
-        amenity_ids = []
+        amenity_ids = []"""
