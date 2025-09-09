@@ -59,9 +59,9 @@ class Place(BaseModel, Base):
 
             review_list = []
             for review in self.storage.all(Review).values():
-                if place_id == self.id
+                if place_id == self.id:
                     review_list.append(review)
-             return review_list
+            return review_list
 
         #city_id = ""
         #user_id = ""
