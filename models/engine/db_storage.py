@@ -33,9 +33,10 @@ class DBStorage:
         try:
             with self.__engine.connect() as conn:
                 result = conn.execute(text("SELECT 1"))
-                print("✅ Connection successful:", result.scalar())
+                #print("✅ Connection successful:", result.scalar())
         except Exception as e:
-            print("❌ Connection failed:", e)
+            pass
+            # print("❌ Connection failed:", e)
 
     def all(self, cls=None):
         """Queries the current session and list all instances of cls"""
