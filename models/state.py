@@ -10,7 +10,6 @@ class State(BaseModel, Base):
     """Representing the state class"""
     __tablename__ = 'states'
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        #id = Column(String(60), primary_key=True, nullable=False)
         name = Column(String(128), nullable=False)
         cities = relationship('City', backref='state',
                               cascade='all, delete, delete-orphan')
