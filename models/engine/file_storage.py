@@ -73,3 +73,7 @@ class FileStorage:
                     self.__objects[key] = classes[value['__class__']](**value)
         except (FileNotFoundError, json.JSONDecodeError):
             pass
+
+    def close(self):
+        """Calls reload after unit of work is done"""
+        self.reload()

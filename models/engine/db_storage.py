@@ -84,4 +84,9 @@ class DBStorage:
         self.__session = Session()
 
     def close(self):
+        """Connections are returned back to the connection pool creating
+           an empty scoped_session object and will create a new Session when
+           called again.
+        """
         self.__session.close()
+        #self.__session.remove()
