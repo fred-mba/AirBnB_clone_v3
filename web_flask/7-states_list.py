@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 def get_db():
     if "db" not in g:
-        g.db = storage._DBStorage__session
+        g.db = storage.all()
     return g.db
 
 
