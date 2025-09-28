@@ -13,7 +13,6 @@ def states_list():
     """List of all State objects present in DBStorage sorted by name (A->Z)"""
     storage_dict = storage.all(State)
     states_list = [val for val in storage_dict.values()]
-    states_list.sort(key=lambda state: state.name)
     return render_template('7-states_list.html', lists_state=states_list)
 
 
