@@ -5,7 +5,6 @@ from flask import Flask, render_template
 from models import storage
 from models.state import State
 
-
 app = Flask(__name__)
 
 
@@ -14,8 +13,8 @@ def states_list():
     """List of all State objects present in DBStorage sorted by name (A->Z)"""
     storage_dict = storage.all(State)
     states_list = [val for val in storage_dict.values()]
-    sorted_list = sorted(storage_dict.values(), key=lambda state: state.name)
-    return render_template('7-states_list.html', list_state=sorted_list)
+    states_list.sort(key=lambda state: state.name)
+    return render_template('7-states_list.html', lists_state=states_list)
 
 
 @app.teardown_appcontext
