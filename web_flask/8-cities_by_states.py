@@ -2,7 +2,7 @@
 """List cities by states"""
 
 from flask import Flask, render_template
-from models import storage, City, State
+from models import storage, City, State, DBStorage
 
 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ app = Flask(__name__)
 @app.route('/cities_by_states', strict_slashes=False)
 def cities_by_state():
     """List cities by state name in relation to storage engine type"""
-    if hasattr(storage, "_DBStorage__session"):
+    if (DBStorage):
         state_dict = storage.all(State)
         city_dict = storage.all(City)
     return render_template(
