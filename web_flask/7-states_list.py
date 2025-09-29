@@ -10,10 +10,9 @@ app = Flask(__name__)
 
 @app.route('/states_list', strict_slashes=False)
 def states_list():
-    """List of all State objects present in DBStorage sorted by name (A->Z)"""
+    """Fetch data from srorage engine"""
     storage_dict = storage.all(State)
-    #states_list = [val for val in storage_dict.values()]
-    return render_template('7-states_list.html', lists_state=storage_dict)
+    return render_template('7-states_list.html', states=storage_dict)
 
 
 @app.teardown_appcontext
