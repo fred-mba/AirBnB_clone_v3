@@ -2,7 +2,7 @@
 """List cities by states"""
 
 from flask import Flask, render_template
-from models import storage, City, State, DBStorage
+from models import storage, City, State
 
 
 app = Flask(__name__)
@@ -11,9 +11,8 @@ app = Flask(__name__)
 @app.route('/cities_by_states', strict_slashes=False)
 def cities_by_state():
     """List cities by state name in relation to storage engine type"""
-    if (DBStorage):
-        state_dict = storage.all(State)
-        city_dict = storage.all(City)
+    state_dict = storage.all(State)
+    city_dict = storage.all(City)
     return render_template(
         '8-cities_by_states.html',
         states=state_dict,
@@ -28,4 +27,4 @@ def teardown_appctx(exception):
 
 
 if __name__ == "__main___":
-    app.run(host='127.0.0.1', port='5000')
+    app.run(host='0.0.0.0', port='5000')
