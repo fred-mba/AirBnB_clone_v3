@@ -89,4 +89,3 @@ class DBStorage:
            called again.
         """
         self.__session.close()
-        #self.__session.remove()
