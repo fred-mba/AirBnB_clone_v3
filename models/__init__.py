@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ Initialize the models package """
 
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from models.user import User
 from models.state import State
 from models.city import City
@@ -11,6 +11,7 @@ from models.review import Review
 from models.engine.file_storage import FileStorage
 from models.engine.db_storage import DBStorage
 import os
+
 
 if os.getenv('HBNB_TYPE_STORAGE') == 'db':
     storage = DBStorage()
