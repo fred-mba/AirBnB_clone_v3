@@ -38,12 +38,13 @@
                             <h4>&nbsp</h4>
 
                             <div class="popover">
-                    {% for amenity in amenities.values() | sort(attribute="name") %}
-                        <ul>
-                            <li>{{ amenity.name }}</li>
-                        </ul>
-                     {% endfor %}
-                    </div>
+                            {% for amenity in amenities.values() | sort(attribute="name") %}
+                                <ul>
+                                    <li>{{ amenity.name }}</li>
+                                </ul>
+                            {% endfor %}
+                        </div>
+                    </section>
                 </div>
 
                 <button>Search</button>
