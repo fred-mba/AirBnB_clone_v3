@@ -80,12 +80,35 @@ class DBStorage:
             bind=self.__engine,
             expire_on_commit=False
         )
-        Session = scoped_session(session_factory)
-        self.__session = Session()
+        # Session = scoped_session(session_factory)
+        self.__session = scoped_session(session_factory)
 
     def close(self):
         """Connections are returned back to the connection pool creating
            an empty scoped_session object and will create a new Session when
            called again.
         """
-        self.__session.close()
+        # self.close()
+        self.__session.remove()
+
+    def get(self, cls, id):
+        """Retrieves one object based on the class and id, else None"""
+
+        obj_list = self.__session.query(cls).all()
+
+        # return next((obj for obj in obj_list if id == obj.id), None)
+
+        for obj in obj_list:
+            if id == obj.id:
+                return obj
+        return None
+
+    def count(self, cls=None):
+        """- Counts the number of objects in storage
+           - Returns the number of objects in storage matching the given class
+           - Else, returns the count of all objects in storage
+        """
+        if cls:
+            return len(self.__session.query(cls).all())
+        else:
+            return len(self.all())

@@ -35,7 +35,6 @@ class FileStorage:
         """
         if obj is not None and hasattr(obj, "to_dict"):
             key = f"{obj.__class__.__name__}.{obj.id}"
-            print(key)
             self.__objects[key] = obj
 
     def save(self):
@@ -77,3 +76,16 @@ class FileStorage:
     def close(self):
         """Calls reload after unit of work is done"""
         self.reload()
+
+    def get(self, cls, id):
+        """Retrieves one object based on the class and id, else None"""
+        obj_dict = self.all(cls)
+
+        return next((obj for obj in obj_dict.values() if id == obj.id), None)
+
+    def count(self, cls=None):
+        """- Counts the number of objects in storage
+           - Returns the number of objects in storage matching the given class
+           - Else, returns the count of all objects in storage
+        """
+        return (len(self.all(cls)) if cls else len(self.all()))
