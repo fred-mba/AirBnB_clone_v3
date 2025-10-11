@@ -43,13 +43,13 @@ class DBStorage:
         instances = {}
         if cls:
             for obj in self.__session.query(cls).all():
-                key = f"{obj.__class__.__name__}.{obj.id}"
+                key = "{}.{}".format(obj.__class__.__name__, obj.id)
                 instances[key] = obj
         else:
             for obj_cls in classes.values():
                 objs = self.__session.query(obj_cls).all()
                 for obj in objs:
-                    key = f"{obj.__class__.__name__}.{obj.id}"
+                    key = "{}.{}".format(obj.__class__.__name__, obj.id)
                     instances[key] = obj
         return instances
 
