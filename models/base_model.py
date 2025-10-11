@@ -47,7 +47,9 @@ class BaseModel:
 
     def __str__(self):
         """returns a string representation"""
-        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
+        return "[{}] ({}) {}".format(
+                                     self.__class__.__name__,
+                                     self.id, self.__dict__)
 
     def save(self):
         """Save the current session to database"""
