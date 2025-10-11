@@ -88,8 +88,8 @@ class DBStorage:
            an empty scoped_session object and will create a new Session when
            called again.
         """
-        # self.close()
-        self.__session.remove()
+        self.__session.close()
+        # self.__session.remove()
 
     def get(self, cls, id):
         """Retrieves one object based on the class and id, else None"""
