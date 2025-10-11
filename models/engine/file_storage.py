@@ -34,7 +34,7 @@ class FileStorage:
            incorrectly implemented, returning `DeclarativeMeta` as a class.
         """
         if obj is not None and hasattr(obj, "to_dict"):
-            key = f"{}.{}".format(obj.__class__.__name__, obj.id)
+            key = "{}.{}".format(obj.__class__.__name__, obj.id)
             self.__objects[key] = obj
 
     def save(self):
