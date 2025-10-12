@@ -70,7 +70,8 @@ class FileStorage:
                 obj_dict = json.load(f)
                 for key, value in obj_dict.items():
                     self.__objects[key] = classes[value['__class__']](**value)
-        except (FileNotFoundError, json.JSONDecodeError):
+        # json.JSONDecodeError
+        except (FileNotFoundError):
             pass
 
     def close(self):
