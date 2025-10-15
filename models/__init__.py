@@ -13,6 +13,14 @@ from models.engine.db_storage import DBStorage
 import os
 
 
+dummy_tables = {
+    "amenities": Amenity,
+    "cities": City,
+    "places": Place,
+    "reviews": Review,
+    "states": State,
+    "users": User
+}
 if os.getenv('HBNB_TYPE_STORAGE') == 'db':
     storage = DBStorage()
 else:
