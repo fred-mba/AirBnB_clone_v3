@@ -22,7 +22,13 @@ def not_found(error):
     return make_response(jsonify({"error": "Not found"}), 404)
 
 
+@app.errorhandler(400)
+def bad_request(error):
+    """Sets up global error handler for bad request"""
+    return jsonify({"error": error.description}), 400
+
+
 if __name__ == "__main__":
     host = getenv('HBNB_API_HOST', '0.0.0.0')
     port = int(getenv('HBNB_API_PORT', 5000))
-    app.run(host=host, port=port, threaded=True)
+    app.run(host=host, port=port, threaded=True, debug=True)
