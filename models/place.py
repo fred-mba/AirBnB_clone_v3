@@ -46,14 +46,10 @@ class Place(BaseModel, Base):
                                  secondary=place_amenity,
                                  back_populates="places",
                                  viewonly=False)
-        cities = relationship("City",
-                              cascade='all, delete',
-                              back_populates="places")
-        user = relationship("User",
-                            cascade='all, delete',
-                            back_populates="places")
+        cities = relationship("City", back_populates="places")
+        user = relationship("User", back_populates="places")
         reviews = relationship("Review",
-                               cascade='all, delete',
+                               cascade='all, delete, delete-orphan',
                                back_populates="place")
     else:
         city_id = ""
