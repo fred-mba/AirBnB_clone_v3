@@ -29,7 +29,11 @@ class BaseModel:
                 if key == '__class__':
                     continue
                 if key in ('created_at', 'updated_at'):
-                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                    try:
+                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                    except ValueError:
+                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+
                 setattr(self, key, value)
 
             # Ensure defaults exist even if missing in kwargs
