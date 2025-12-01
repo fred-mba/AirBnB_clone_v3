@@ -21,11 +21,11 @@ def tear_appctx(exception):
 def not_found(error):
     return make_response(jsonify({"error": "Not found"}), 404)
 
-
+"""
 @app.errorhandler(400)
 def bad_request(error):
-    """Sets up global error handler for bad request"""
-    return jsonify({"error": error.description}), 400
+    Sets up global error handler for bad request
+    return jsonify({"error": error.description}), 400"""
 
 
 if __name__ == "__main__":
