@@ -21,6 +21,7 @@ def states(state_id=None):
     else:
         states = [state_obj.to_dict()
                   for state_obj in storage.all(State).values()]
+        print(type(states))
         return jsonify(states)
 
 
@@ -42,10 +43,10 @@ def create_state(state_id=None):
     """Creates a state"""
     data = request.get_json()
     if not data:
-        abort(400, "Not a JSON")
+        abort(400, description="Not a JSON")
 
     if 'name' not in data:
-        abort(400, "Missing name")
+        abort(400, description="Missing name")
 
     new_state = State(**data)
     new_state.save()
@@ -63,7 +64,7 @@ def update_state(state_id=None):
 
     data = request.get_json()
     if not data:
-        abort(400, "Not a JSON")
+        abort(400, description="Not a JSON")
 
     ignore = ["id", "created_at", "updated_at"]
     for key, value in data.items():
