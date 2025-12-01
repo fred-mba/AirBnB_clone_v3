@@ -21,7 +21,6 @@ def states(state_id=None):
     else:
         states = [state_obj.to_dict()
                   for state_obj in storage.all(State).values()]
-        print(type(states))
         return jsonify(states)
 
 
@@ -39,7 +38,7 @@ def delete_state(state_id=None):
 
 
 @app_views.route('/states', methods=["POST"], strict_slashes=False)
-def create_state(state_id=None):
+def create_state():
     """Creates a state"""
     data = request.get_json(force=True)
     if not data:
