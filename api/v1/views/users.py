@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Retrive State objects"""
+"""State view module to handle REST API actions"""
 
 from flask import jsonify, request, abort
 from api.v1.views import app_views
@@ -9,7 +9,11 @@ from models import storage, User
 @app_views.route('/users', methods=["GET"], strict_slashes=False)
 @app_views.route('/users/<user_id>', methods=["GET"], strict_slashes=False)
 def users(user_id=None):
-    """Retrives lists of all users if no user id is given."""
+    """
+    Retrives:
+    - Lists of all users(/users).
+    - A single user by its id(/users/<user_id>)
+    """
 
     if user_id:
         user = storage.get(User, user_id)
@@ -27,10 +31,10 @@ def users(user_id=None):
                  methods=["DELETE"], strict_slashes=False)
 def delete_user(user_id=None):
     """"Deletes a user by id"""
-    if user_id:
-        user = storage.get(User, user_id)
-        if not user:
-            abort(404)
+    user = storage.get(User, user_id)
+    if not user:
+        abort(404)
+
     storage.delete(user)
     storage.save()
     return jsonify({}), 200
@@ -39,7 +43,7 @@ def delete_user(user_id=None):
 @app_views.route('/users', methods=["POST"], strict_slashes=False)
 def create_user():
     """Creates a user"""
-    data = request.get_json(force=True)
+    data = request.get_json()
     if not data:
         abort(400, description="Not a JSON")
 
@@ -56,8 +60,10 @@ def create_user():
 
 @app_views.route('/users/<user_id>', methods=["PUT"], strict_slashes=False)
 def update_user(user_id=None):
-    """"Updates the User object with all key-value pairs of the
-    dictionary."""
+    """"
+    Updates the User object with all key-value pairs of the
+    dictionary.
+    """
 
     user = storage.get(User, user_id)
     if not user:

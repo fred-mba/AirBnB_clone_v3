@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Retrive State objects"""
+"""State view module"""
 
 from flask import jsonify, request, abort
 from api.v1.views import app_views
@@ -9,8 +9,11 @@ from models import storage, State
 @app_views.route('/states', methods=["GET"], strict_slashes=False)
 @app_views.route('/states/<state_id>', methods=["GET"], strict_slashes=False)
 def states(state_id=None):
-    """Retrives lists of all state objects if no state id is given,
-       else if valid, a single state object response."""
+    """
+    Retrives:
+    - Lists of all state objects(/states),
+    - A single state object(/states/<state_id>).
+    """
 
     if state_id:
         state = storage.get(State, state_id)
@@ -28,10 +31,10 @@ def states(state_id=None):
                  methods=["DELETE"], strict_slashes=False)
 def delete_state(state_id=None):
     """"Deletes a state object"""
-    if state_id:
-        state = storage.get(State, state_id)
-        if not state:
-            abort(404)
+    state = storage.get(State, state_id)
+    if not state:
+        abort(404)
+
     storage.delete(state)
     storage.save()
     return jsonify({}), 200
@@ -40,7 +43,7 @@ def delete_state(state_id=None):
 @app_views.route('/states', methods=["POST"], strict_slashes=False)
 def create_state():
     """Creates a state"""
-    data = request.get_json(force=True)
+    data = request.get_json()
     if not data:
         abort(400, description="Not a JSON")
 
@@ -54,14 +57,16 @@ def create_state():
 
 @app_views.route('/states/<state_id>', methods=["PUT"], strict_slashes=False)
 def update_state(state_id=None):
-    """"Updates the State object with all key-value pairs of the
-    dictionary."""
+    """"
+    Updates the State object with all key-value pairs of the
+    dictionary.
+    """
 
     state = storage.get(State, state_id)
     if not state:
         abort(404)
 
-    data = request.get_json(force=True)
+    data = request.get_json()
     if not data:
         abort(400, description="Not a JSON")
 

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""View for City objects that handles all RESTful API actions"""
+"""City view module that handles all RESTful API actions"""
 
 from flask import jsonify, request, abort
 from api.v1.views import app_views
@@ -10,33 +10,34 @@ from models import storage, State, City
                  strict_slashes=False)
 @app_views.route('/cities/<city_id>', methods=["GET"], strict_slashes=False)
 def cities(state_id=None, city_id=None):
-    """Retrives the list of all city objects of a state."""
-
+    """Retrives:
+    - List of all city objects of a state(/states/<state_id>/cities)
+    - A single city object by its id(/cities/<city_id>)
+    """
     if state_id:
         state = storage.get(State, state_id)
-
-        if state:
-            cities = []
-            for city in state.cities:
-                cities.append(city.to_dict())
-            return jsonify(cities)
-        else:
+        if not state:
             abort(404)
+
+        cities = [city.to_dict() for city in state.cities]
+        return jsonify(cities)
+
     if city_id:
         city = storage.get(City, city_id)
         if not city:
             abort(404)
+
         return jsonify(city.to_dict())
 
 
 @app_views.route('/cities/<city_id>',
                  methods=["DELETE"], strict_slashes=False)
 def delete_city(city_id=None):
-    """"Deletes a city object given its city_id"""
-    if city_id:
-        city = storage.get(City, city_id)
-        if not city:
-            abort(404)
+    """"Deletes a city object by its id"""
+    city = storage.get(City, city_id)
+    if not city:
+        abort(404)
+
     storage.delete(city)
     storage.save()
     return jsonify({}), 200
@@ -46,11 +47,11 @@ def delete_city(city_id=None):
                  strict_slashes=False)
 def create_city(state_id=None):
     """Creates a city linked to the given state id"""
-    if state_id:
-        state = storage.get(State, state_id)
-        if not state:
-            abort(404)
-    data = request.get_json(force=True)
+    state = storage.get(State, state_id)
+    if not state:
+        abort(404)
+
+    data = request.get_json()
     if not data:
         abort(400, description="Not a JSON")
 
@@ -65,8 +66,10 @@ def create_city(state_id=None):
 
 @app_views.route('/cities/<city_id>', methods=["PUT"], strict_slashes=False)
 def update_city(city_id=None):
-    """"Updates city object ignoring Keys: id, state_id, created_at and,
-        updated_at."""
+    """"
+    Updates city object.
+    Ignores: id, state_id, created_at and updated_at.
+    """
 
     city = storage.get(City, city_id)
     if not city:
