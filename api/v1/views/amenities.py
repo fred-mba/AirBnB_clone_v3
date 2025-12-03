@@ -6,31 +6,29 @@ from api.v1.views import app_views
 from models import storage, Amenity
 
 
-@app_views.route('/amenities', methods=["GET"], strict_slashes=False)
 @app_views.route('/amenities/<amenity_id>', methods=["GET"],
                  strict_slashes=False)
-def amenities(amenity_id=None):
-    """
-    Retrive:
-    - List of all amenities objects(/amenities)
-    - Single amenity objects by their ids(/amenities/<amenity_id>).
-    """
+def get_amenity(amenity_id):
+    """Get single amenity objects by their ids"""
+    amenity = storage.get(Amenity, amenity_id)
+    if not amenity:
+        abort(404)
 
-    if amenity_id:
-        amenity = storage.get(Amenity, amenity_id)
-        if not amenity:
-            abort(404)
+    return jsonify(amenity.to_dict())
 
-        return jsonify(amenity.to_dict())
-    else:
-        amenities = [amenity.to_dict()
-                     for amenity in storage.all(Amenity).values()]
-        return jsonify(amenities)
+
+@app_views.route('/amenities', methods=["GET"],
+                 strict_slashes=False)
+def all_amenities():
+    """Retrive list of all amenities objects"""
+    amenities = [amenity.to_dict()
+                 for amenity in storage.all(Amenity).values()]
+    return jsonify(amenities)
 
 
 @app_views.route('/amenities/<amenity_id>',
                  methods=["DELETE"], strict_slashes=False)
-def delete_amenity(amenity_id=None):
+def delete_amenity(amenity_id):
     """"Deletes a amenity object given its id"""
     amenity = storage.get(Amenity, amenity_id)
     if not amenity:
@@ -59,7 +57,7 @@ def create_amenity():
 
 @app_views.route('/amenities/<amenity_id>', methods=["PUT"],
                  strict_slashes=False)
-def update_amenity(amenity_id=None):
+def update_amenity(amenity_id):
     """"
     Updates amenity object.
     Ignores: id, created_at and updated_at.

@@ -6,33 +6,31 @@ from api.v1.views import app_views
 from models import storage, State, City
 
 
+@app_views.route('/cities/<city_id>', methods=["GET"], strict_slashes=False)
+def get_city(city_id):
+    """Get single city object by its id"""
+    city = storage.get(City, city_id)
+    if not city:
+        abort(404)
+
+    return jsonify(city.to_dict())
+
+
 @app_views.route('/states/<state_id>/cities', methods=["GET"],
                  strict_slashes=False)
-@app_views.route('/cities/<city_id>', methods=["GET"], strict_slashes=False)
-def cities(state_id=None, city_id=None):
-    """Retrives:
-    - List of all city objects of a state(/states/<state_id>/cities)
-    - A single city object by its id(/cities/<city_id>)
-    """
-    if state_id:
-        state = storage.get(State, state_id)
-        if not state:
-            abort(404)
+def cities(state_id):
+    """Retrives list of all city objects of a state"""
+    state = storage.get(State, state_id)
+    if not state:
+        abort(404)
 
-        cities = [city.to_dict() for city in state.cities]
-        return jsonify(cities)
-
-    if city_id:
-        city = storage.get(City, city_id)
-        if not city:
-            abort(404)
-
-        return jsonify(city.to_dict())
+    cities = [city.to_dict() for city in state.cities]
+    return jsonify(cities)
 
 
 @app_views.route('/cities/<city_id>',
                  methods=["DELETE"], strict_slashes=False)
-def delete_city(city_id=None):
+def delete_city(city_id):
     """"Deletes a city object by its id"""
     city = storage.get(City, city_id)
     if not city:
@@ -45,7 +43,7 @@ def delete_city(city_id=None):
 
 @app_views.route('/states/<state_id>/cities', methods=["POST"],
                  strict_slashes=False)
-def create_city(state_id=None):
+def create_city(state_id):
     """Creates a city linked to the given state id"""
     state = storage.get(State, state_id)
     if not state:
@@ -66,7 +64,7 @@ def create_city(state_id=None):
 
 
 @app_views.route('/cities/<city_id>', methods=["PUT"], strict_slashes=False)
-def update_city(city_id=None):
+def update_city(city_id):
     """"
     Updates city object.
     Ignores: id, state_id, created_at and updated_at.
