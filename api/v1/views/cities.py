@@ -75,7 +75,7 @@ def update_city(city_id=None):
     if not city:
         abort(404)
 
-    data = request.get_json(force=True)
+    data = request.get_json()
     if not data:
         abort(400, description="Not a JSON")
 
