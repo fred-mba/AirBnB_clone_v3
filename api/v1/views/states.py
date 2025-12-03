@@ -7,13 +7,16 @@ from models import storage, State
 
 
 @app_views.route('/states', methods=["GET"], strict_slashes=False)
+def all_states():
+    """Retrieve lists of all state objects"""
+    states = [state_obj.to_dict()
+              for state_obj in storage.all(State).values()]
+    return jsonify(states)
+
+
 @app_views.route('/states/<state_id>', methods=["GET"], strict_slashes=False)
-def states(state_id=None):
-    """
-    Retrives:
-    - Lists of all state objects(/states),
-    - A single state object(/states/<state_id>).
-    """
+def get_state(state_id):
+    """A single state object"""
 
     if state_id:
         state = storage.get(State, state_id)
@@ -21,15 +24,10 @@ def states(state_id=None):
             abort(404)
         return jsonify(state.to_dict())
 
-    else:
-        states = [state_obj.to_dict()
-                  for state_obj in storage.all(State).values()]
-        return jsonify(states)
-
 
 @app_views.route('/states/<state_id>',
                  methods=["DELETE"], strict_slashes=False)
-def delete_state(state_id=None):
+def delete_state(state_id):
     """"Deletes a state object"""
     state = storage.get(State, state_id)
     if not state:
@@ -57,7 +55,7 @@ def create_state():
 
 
 @app_views.route('/states/<state_id>', methods=["PUT"], strict_slashes=False)
-def update_state(state_id=None):
+def update_state(state_id):
     """"
     Updates the State object with all key-value pairs of the
     dictionary.

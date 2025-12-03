@@ -7,29 +7,26 @@ from models import storage, User
 
 
 @app_views.route('/users', methods=["GET"], strict_slashes=False)
+def all_users():
+    """Get list of all users"""
+    users = [user_obj.to_dict()
+             for user_obj in storage.all(User).values()]
+    return jsonify(users)
+
+
 @app_views.route('/users/<user_id>', methods=["GET"], strict_slashes=False)
-def users(user_id=None):
-    """
-    Retrives:
-    - Lists of all users(/users).
-    - A single user by its id(/users/<user_id>)
-    """
+def get_user(user_id):
+    """A single user by its id"""
 
-    if user_id:
-        user = storage.get(User, user_id)
-        if not user:
-            abort(404)
-        return jsonify(user.to_dict())
-
-    else:
-        users = [user_obj.to_dict()
-                 for user_obj in storage.all(User).values()]
-        return jsonify(users)
+    user = storage.get(User, user_id)
+    if not user:
+        abort(404)
+    return jsonify(user.to_dict())
 
 
 @app_views.route('/users/<user_id>',
                  methods=["DELETE"], strict_slashes=False)
-def delete_user(user_id=None):
+def delete_user(user_id):
     """"Deletes a user by id"""
     user = storage.get(User, user_id)
     if not user:
@@ -60,7 +57,7 @@ def create_user():
 
 
 @app_views.route('/users/<user_id>', methods=["PUT"], strict_slashes=False)
-def update_user(user_id=None):
+def update_user(user_id):
     """"
     Updates the User object with all key-value pairs of the
     dictionary.

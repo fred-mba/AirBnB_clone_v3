@@ -8,19 +8,19 @@ from models import storage, Place, Review, User
 
 @app_views.route('/places/<place_id>/reviews', methods=["GET"],
                  strict_slashes=False)
-@app_views.route('/reviews/<review_id>', methods=["GET"], strict_slashes=False)
-def reviews(place_id=None, review_id=None):
-    """Retrives:
-    - List of all reviews of a place(/places/<place_id>/reviews)
-    - A single review object by its id(/reviews/<review_id>)
-    """
-    if place_id:
-        place = storage.get(Place, place_id)
-        if not place:
-            abort(404)
+def reviews(place_id):
+    """Retrive list of all reviews of a place"""
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
 
-        reviews = [review.to_dict() for review in place.reviews]
-        return jsonify(reviews)
+    reviews = [review.to_dict() for review in place.reviews]
+    return jsonify(reviews)
+
+
+@app_views.route('/reviews/<review_id>', methods=["GET"], strict_slashes=False)
+def get_review(review_id):
+    """Get a single review object by its id"""
 
     if review_id:
         review = storage.get(Review, review_id)
@@ -32,7 +32,7 @@ def reviews(place_id=None, review_id=None):
 
 @app_views.route('/reviews/<review_id>',
                  methods=["DELETE"], strict_slashes=False)
-def delete_review(review_id=None):
+def delete_review(review_id):
     """"Deletes a review object by its id"""
     review = storage.get(Review, review_id)
     if not review:
@@ -45,7 +45,7 @@ def delete_review(review_id=None):
 
 @app_views.route('/places/<place_id>/reviews', methods=["POST"],
                  strict_slashes=False)
-def create_place_review(place_id=None):
+def create_place_review(place_id):
     """Creates a place review by place id"""
     place = storage.get(Place, place_id)
     if not place:
@@ -72,7 +72,7 @@ def create_place_review(place_id=None):
 
 
 @app_views.route('/reviews/<review_id>', methods=["PUT"], strict_slashes=False)
-def update_place_review(review_id=None):
+def update_place_review(review_id):
     """"
     Updates review object.
     Ignores: id, user_id, place_id, created_at and updated_at.
