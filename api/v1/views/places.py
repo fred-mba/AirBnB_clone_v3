@@ -6,15 +6,20 @@ from api.v1.views import app_views
 from models import storage, Place, City, User
 
 
+@app_views.route('/places/<place_id>', methods=["GET"], strict_slashes=False)
+def get_place(place_id):
+    """Retrieve a single place using place id"""
+    if place_id:
+        place = storage.get(Place, place_id)
+        if not place:
+            abort(404)
+        return jsonify(place.to_dict())
+
+
 @app_views.route('/cities/<city_id>/places', methods=["GET"],
                  strict_slashes=False)
-@app_views.route('/places/<place_id>', methods=["GET"], strict_slashes=False)
-def city_places(place_id=None, city_id=None):
-    """
-    Retrive:
-      - List of all Place objects of a City: (/cities/<city_id>/places)
-      - A single place using place id (places/<place_id>)
-    """
+def city_places(city_id):
+    """Retrive list of all place objects of a City"""
 
     if city_id:
         city = storage.get(City, city_id)
@@ -24,16 +29,10 @@ def city_places(place_id=None, city_id=None):
         places = [place.to_dict() for place in city.places]
         return jsonify(places)
 
-    if place_id:
-        place = storage.get(Place, place_id)
-        if not place:
-            abort(404)
-        return jsonify(place.to_dict())
-
 
 @app_views.route('/places/<place_id>',
                  methods=["DELETE"], strict_slashes=False)
-def delete_place(place_id=None):
+def delete_place(place_id):
     """"Deletes place object given its id"""
     place = storage.get(Place, place_id)
     if not place:
@@ -46,7 +45,7 @@ def delete_place(place_id=None):
 
 @app_views.route('/cities/<city_id>/places', methods=["POST"],
                  strict_slashes=False)
-def create_place(city_id=None):
+def create_place(city_id):
     """Creates a place linked to the given city id"""
     city = storage.get(City, city_id)
     if not city:
@@ -75,7 +74,7 @@ def create_place(city_id=None):
 
 
 @app_views.route('/places/<place_id>', methods=["PUT"], strict_slashes=False)
-def update_place(place_id=None):
+def update_place(place_id):
     """
     Updates place object.
     Ignores: id, user_id, city_id, created_at, and updated_at.
