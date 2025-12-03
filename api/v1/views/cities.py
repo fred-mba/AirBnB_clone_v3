@@ -51,8 +51,9 @@ def create_city(state_id=None):
     if not state:
         abort(404)
 
-    data = request.get_json()
-    if not data:
+    data = request.get_json(silent=True)
+
+    if data is None or not request.is_json:
         abort(400, description="Not a JSON")
 
     if 'name' not in data:
@@ -75,8 +76,8 @@ def update_city(city_id=None):
     if not city:
         abort(404)
 
-    data = request.get_json()
-    if not data:
+    data = request.get_json(silent=True)
+    if data is None or not request.is_json:
         abort(400, description="Not a JSON")
 
     ignore = ["id", "state_id", "created_at", "updated_at"]

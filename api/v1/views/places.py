@@ -55,7 +55,7 @@ def create_place(city_id=None):
     # (silent=True)Avoid automatic 415 error
     data = request.get_json(silent=True)
 
-    if not request.is_json or data is None:
+    if data is None or not request.is_json:
         abort(400, description="Not a JSON")
 
     if 'user_id' not in data:
@@ -87,7 +87,7 @@ def update_place(place_id=None):
 
     data = request.get_json(silent=True)
 
-    if not request.is_json or data is None:
+    if data is None or not request.is_json:
         abort(400, description="Not a JSON")
 
     ignore = ["id", "user_id", "city_id", "created_at", "updated_at"]

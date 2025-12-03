@@ -51,12 +51,13 @@ def create_place_review(place_id=None):
     if not place:
         abort(404)
 
-    data = request.get_json()
-    if not data:
+    data = request.get_json(silent=True)
+    if data is None or not request.is_json:
         abort(400, description="Not a JSON")
 
     if 'user_id' not in request.get_json():
         abort(400, description="Missing user_id")
+
     user = storage.get(User, data['user_id'])
     if not user:
         abort(404)
@@ -81,8 +82,9 @@ def update_place_review(review_id=None):
     if not review:
         abort(404)
 
-    data = request.get_json()
-    if not data:
+    data = request.get_json(silent=True)
+
+    if data is None or not request.is_json:
         abort(400, description="Not a JSON")
 
     ignore = ["id", "user_id", "place_id", "created_at", "updated_at"]
