@@ -9,25 +9,22 @@ from models import storage, Place, City, User
 @app_views.route('/places/<place_id>', methods=["GET"], strict_slashes=False)
 def get_place(place_id):
     """Retrieve a single place using place id"""
-    if place_id:
-        place = storage.get(Place, place_id)
-        if not place:
-            abort(404)
-        return jsonify(place.to_dict())
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+    return jsonify(place.to_dict())
 
 
 @app_views.route('/cities/<city_id>/places', methods=["GET"],
                  strict_slashes=False)
 def city_places(city_id):
     """Retrive list of all place objects of a City"""
+    city = storage.get(City, city_id)
 
-    if city_id:
-        city = storage.get(City, city_id)
-
-        if not city:
-            abort(404)
-        places = [place.to_dict() for place in city.places]
-        return jsonify(places)
+    if not city:
+        abort(404)
+    places = [place.to_dict() for place in city.places]
+    return jsonify(places)
 
 
 @app_views.route('/places/<place_id>',
