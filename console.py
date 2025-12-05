@@ -232,14 +232,7 @@ class HBNBCommand(cmd.Cmd):
                 self.do_all(class_name)
 
             if method_call == "count()":
-                count = 0
-                all_objs = self.objects
-
-                for key in all_objs.keys():
-                    if key.startswith(f"{class_name}."):
-                        count += 1
-
-                print(count)
+                self.do_count(class_name)
 
             if method_call.startswith("show("):
                 match = re.search(r'\(["\']?([^"\')]+)["\']?\)', method_call)
