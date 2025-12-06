@@ -238,7 +238,7 @@ class HBNBCommand(cmd.Cmd):
                 match = re.search(r'\(["\']?([^"\')]+)["\']?\)', method_call)
                 if match:
                     obj_id = match.group(1)
-                    self.do_show(f"{class_name} {obj_id}")
+                    self.do_show("{} {}".format(class_name, obj_id))
 
             if method_call.startswith("destroy("):
                 match = re.search(r'\(["\']?([^"\')]+)[]"\']?\)', method_call)
