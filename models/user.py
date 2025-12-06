@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from models.place import Place
 import os
 import sqlalchemy
+import hashlib
 
 
 class User(BaseModel, Base):
@@ -13,7 +14,7 @@ class User(BaseModel, Base):
     __tablename__ = "users"
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         email = Column(String(128), nullable=False)
-        password = Column(String(128), nullable=False)
+        _password = Column("password", String(128), nullable=False)
         first_name = Column(String(128), nullable=True)
         last_name = Column(String(128), nullable=True)
         places = relationship("Place",
@@ -22,8 +23,17 @@ class User(BaseModel, Base):
         reviews = relationship("Review",
                                cascade='all, delete, delete-orphan',
                                back_populates="user")
+
     else:
         email = ''
-        password = ''
+        _password = ''
         first_name = ''
         last_name = ''
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, value):
+        self._password = hashlib.md5(value.encode('utf-8')).hexdigest()

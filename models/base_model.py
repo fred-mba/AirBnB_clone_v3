@@ -6,6 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import uuid
 import models
+import os
 
 Base = declarative_base()
 
@@ -30,7 +31,10 @@ class BaseModel:
                     continue
                 if key in ('created_at', 'updated_at'):
                     try:
-                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                        value = datetime.strptime(
+                                                  value,
+                                                  '%Y-%m-%dT%H:%M:%S.%f'
+                        )
                     except ValueError:
                         value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
 
@@ -61,19 +65,22 @@ class BaseModel:
         models.storage.new(self)  # Moved here
         models.storage.save()
 
-    def to_dict(self):
+    def to_dict(self, include_password=False):
         """
            - Copies everything python stores inside __objects including
              SQLAlchemy's objects.
            - The _sa_instance_state is filtered out since json library can't
              serialize it
+           - include_password: Hides password unless True
         """
         my_dict = dict(self.__dict__)
         my_dict["__class__"] = self.__class__.__name__
         my_dict["created_at"] = self.created_at.isoformat()
         my_dict["updated_at"] = self.updated_at.isoformat()
-        # Remove SQLAlchemy internal attribute if present
         my_dict.pop('_sa_instance_state', None)
+
+        if not include_password:
+            my_dict.pop('_password', None)
         return my_dict
 
     def delete(self):
