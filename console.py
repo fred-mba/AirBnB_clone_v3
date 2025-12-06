@@ -81,7 +81,7 @@ class HBNBCommand(cmd.Cmd):
 
         else:
             obj_id = args_input[1]
-            key = f"{class_name}.{obj_id}"
+            key = "{}.{}".format(class_name, obj_id)
             all_objs = storage.all()
 
             if key in all_objs.keys():
@@ -137,7 +137,7 @@ class HBNBCommand(cmd.Cmd):
             return
 
         obj_id = args_input[1]
-        key = f"{class_name}.{obj_id}"
+        key = "{}.{}".format(class_name, obj_id)
         all_objs = storage.all()
 
         if key not in all_objs:
@@ -187,7 +187,7 @@ class HBNBCommand(cmd.Cmd):
 
         else:
             obj_id = line_args[1].strip('"')
-            key = f"{class_name}.{obj_id}"
+            key = "{}.{}".format(class_name, obj_id)
             all_objs = storage.all()
 
             if key not in all_objs:
@@ -244,7 +244,7 @@ class HBNBCommand(cmd.Cmd):
                 match = re.search(r'\(["\']?([^"\')]+)[]"\']?\)', method_call)
                 if match:
                     obj_id = match.group(1)
-                    self.do_destroy(f"{class_name} {obj_id}")
+                    self.do_destroy("{} {}".format(class_name, obj_id))
 
             if method_call.startswith("update("):
                 match = re.search(
@@ -255,7 +255,11 @@ class HBNBCommand(cmd.Cmd):
                 if match:
                     obj_id, attr_name, attr_value = match.groups()
                     self.do_update(
-                        f"{class_name} {obj_id} {attr_name} {attr_value}"
+                        "{} {} {} {}".format(
+                                             class_name,
+                                             obj_id,
+                                             attr_name,
+                                             attr_value)
                     )
 
                 dict_match = re.search(r'update\(["\']([^,"\']+)["\']\s*,'
@@ -265,7 +269,12 @@ class HBNBCommand(cmd.Cmd):
                     attr_dict = eval(dict_match.group(2))
                     for attr_name, attr_value in attr_dict.items():
                         self.do_update(
-                            f"{class_name} {obj_id} {attr_name} {attr_value}")
+                            "{} {} {} {}".format(
+                                                 class_name,
+                                                 obj_id,
+                                                 attr_name,
+                                                 attr_value)
+                        )
 
     def do_quit(self, args):
         """Quit command to exit the program"""
