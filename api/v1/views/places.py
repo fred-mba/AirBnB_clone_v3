@@ -117,7 +117,9 @@ def places_search():
 
     # If JSON body is empty retrieve all Place objects
     if data == {}:
-        place_list = [storage.all(Place.values())]
+        place_list = [obj_value.to_dict()
+                      for obj_value in storage.all(Place).values()]
+        return jsonify(place_list)
 
     cities_list = []
     # ------------ STATES BLOCK ------------
@@ -141,7 +143,7 @@ def places_search():
        objects, else return extended list of places from both.
     """
     if not cities_list:
-        place_list = [storage.all(Place.values())]
+        place_list = [storage.all(Place).values()]
 
     else:
         place_list = [place for city in cities_list for place in city.places]
@@ -163,5 +165,5 @@ def places_search():
                 filtered_places.append(place)
 
         place_list = filtered_places
-    all_places = [place.to_json() for place in place_list]
+    all_places = [place.to_dict() for place in place_list]
     return jsonify(all_places)
