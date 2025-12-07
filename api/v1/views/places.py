@@ -3,7 +3,7 @@
 
 from flask import jsonify, request, abort
 from api.v1.views import app_views
-from models import storage, Place, City, User
+from models import storage, Place, City, User, State
 
 
 @app_views.route('/places/<place_id>', methods=["GET"], strict_slashes=False)
@@ -93,3 +93,41 @@ def update_place(place_id):
 
     place.save()
     return jsonify(place.to_dict())
+
+
+@app_views.route('/places_search', methods=["POST"], strict_slashes=False)
+def places_search():
+    """
+    Retrieves all Place objects depending on the JSON in
+    the body of the request.
+    - If the JSON body is empty or each list of all keys are empty:
+      retrieve all Place objects.
+    """
+    data = request.get_json()
+
+    if data is None or not request.is_json:
+        abort(400, description="Not a JSON")
+
+    # If JSON body is empty retrieve all Place objects
+    if data == {}:
+        return jsonify([obj_value.to_dict()
+                       for obj_value in storage.all(Place).values()])
+
+    city_list = []
+
+    if 'states' in data:
+        state_list = [storage.get(State, state_id)
+                      for state_id in data['states']]
+        for state in state_list:
+            if state:
+                city_list.extend(state.cities)
+
+    if 'cities' in data:
+        for city_id in data['cities']:
+            city = storage.get(City, city_id)
+            if city:
+                city_list.append(city)
+
+    place_list = [place.to_dict()
+                  for city in city_list for place in city.places]
+    return jsonify(place_list)
