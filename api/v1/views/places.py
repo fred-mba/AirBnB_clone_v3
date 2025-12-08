@@ -110,16 +110,20 @@ def places_search():
       states and cities, or on all Place if states and cities are both
       empty or missing.
     """
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
     if data is None or not request.is_json:
         abort(400, description="Not a JSON")
 
-    # If JSON body is empty retrieve all Place objects
-    if data == {}:
-        place_list = [obj_value.to_dict()
+    """ If JSON body is empty or each list of all keys is empty retrieve
+    all Place objects """
+    all_empty_keys = all(
+        isinstance(value, list) and len(value) == 0
+        for value in data.values()
+    )
+    if data == {} or all_empty_keys:
+        place_list = [obj_value
                       for obj_value in storage.all(Place).values()]
-        return jsonify(place_list)
 
     cities_list = []
     # ------------ STATES BLOCK ------------
@@ -139,27 +143,30 @@ def places_search():
 
     # ------------ PLACES BLOCK ------------
     """
-       If states and cities are both empty or missing, retrieve all place
+       If states and cities are both empty or missing, generate all place
        objects, else return extended list of places from both.
     """
     if not cities_list:
-        place_list = [storage.all(Place).values()]
+        place_list = list(storage.all(Place).values())
 
     else:
         place_list = [place for city in cities_list for place in city.places]
 
     # ------------ AMENITIES FILTER BLOCK ------------
     """
-       If amenities list is not empty, limit search results,
-       else, if a Place doesn’t have even one of these amenities,
-       it won’t be retrieved
+       - If amenities list is not empty, filter places in place_list on
+         PLACES BLOCK where cities_list in not empty,
+         else, if a Place doesn’t have even one of these amenities,
+         it won’t be retrieved.
+       - If states and cities are both empty or missing, filter all places
+         linked with amenity id from place_list.
     """
     if 'amenities' in data and data['amenities']:
         amenity_ids = set(data['amenities'])
 
         filtered_places = []
         for place in place_list:
-            place_amenity_ids = [amenity.id for amenity in place.amenities]
+            place_amenity_ids = {amenity.id for amenity in place.amenities}
 
             if amenity_ids.issubset(place_amenity_ids):
                 filtered_places.append(place)
