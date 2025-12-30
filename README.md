@@ -141,4 +141,7 @@ Usage: <class_name>.update(<_id>, <dictionary>)
 ```
 <br>
 
-## Forked repository
+#### Dump File
+```
+curl -o 100-dump.sql "https://s3.amazonaws.com/intranet-projects-files/holbertonschool-higher-level_programming+/290/100-hbnb.sql"
+```
